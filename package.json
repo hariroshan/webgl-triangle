@@ -1,5 +1,5 @@
 {
-  "name": "blank",
+  "name": "webgl-triangle",
   "main": "app/app.ts",
   "version": "1.0.0",
   "private": true,
@@ -11,10 +11,12 @@
     "build:webpack": "webpack --mode development"
   },
   "dependencies": {
+    "@nativescript/canvas": "^1.1.0",
+    "@nativescript/canvas-media": "^1.1.0",
     "@nativescript/core": "~8.4.0",
     "@nativescript/theme": "~3.0.2",
     "elm": "^0.19.1-5",
-    "elm-native-js": "^1.1.0"
+    "elm-native-js": "^1.1.1"
   },
   "devDependencies": {
     "@nativescript/ios": "8.4.1",
