@@ -1,4 +1,4 @@
-module Triangle exposing (main)
+module Main exposing (main)
 
 {-
    Rotating triangle, that is a "hello world" of the WebGL
@@ -6,29 +6,41 @@ module Triangle exposing (main)
 
 import Browser
 import Browser.Events exposing (onAnimationFrameDelta)
+import Math.Matrix4 as Mat4 exposing (Mat4)
+import Math.Vector3 exposing (Vec3, vec3)
 import Native exposing (Native)
 import Native.Attributes as NA
 import Native.Frame as Frame
 import Native.Layout as Layout
 import Native.Page as Page
 import WebGL exposing (Mesh, Shader)
-import Math.Matrix4 as Mat4 exposing (Mat4)
-import Math.Vector3 exposing (vec3, Vec3)
 
 
 type NavPage
     = HomePage
 
 
+type alias Flags =
+    { width : Int
+    , height : Int
+    }
+
+
 type alias Model =
     { rootFrame : Frame.Model NavPage
+    , width : Int
+    , height : Int
     , time : Float
     }
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( { rootFrame = Frame.init HomePage, time = 0 }
+init : Flags -> ( Model, Cmd Msg )
+init flags =
+    ( { rootFrame = Frame.init HomePage
+      , time = 0
+      , width = flags.width
+      , height = flags.height
+      }
     , Cmd.none
     )
 
@@ -43,6 +55,7 @@ update msg model =
     case msg of
         SyncFrame bool ->
             ( { model | rootFrame = Frame.handleBack bool model.rootFrame }, Cmd.none )
+
         Tick tick ->
             ( { model | time = model.time + tick }, Cmd.none )
 
@@ -53,8 +66,8 @@ homePage model =
         []
         (Layout.stackLayout []
             [ WebGL.toHtml
-                [ NA.width "400"
-                , NA.height "400"
+                [ model.width |> String.fromInt |> NA.width
+                , model.height |> String.fromInt |> NA.height
                 ]
                 [ WebGL.entity
                     vertexShader
@@ -84,10 +97,10 @@ subscriptions _ =
     onAnimationFrameDelta Tick
 
 
-main : Program () Model Msg
+main : Program Flags Model Msg
 main =
     Browser.element
-        { init = always init
+        { init = init
         , view = view
         , update = update
         , subscriptions = subscriptions
